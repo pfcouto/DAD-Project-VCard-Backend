@@ -24,17 +24,17 @@ class Transaction extends Model
         return $this->belongsTo(VCard::class, 'vcard  ', 'phone_number');
     }
 
-    public function vcardMirrored()
+    public function pairVCard()
     {
         return $this->belongsTo(VCard::class, 'pair_vcard  ', 'phone_number');
     }
 
-    public function transactionsPair()
+    public function pairTransactions()
     {
         return $this->hasOne(Transaction::class, 'pair_transaction', 'id');
     }
 
-    public function transactionsPair2()
+    public function pairTransactions2()
     {
         return $this->belongsTo(Transaction::class, 'pair_transaction', 'id');
     }
