@@ -1,7 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\api\TransactionController;
+use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', [AuthController::class, 'login']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::get('users/me', [UserController::class, 'show_me']);
+    Route::get('users/{user}/transactions', [TransactionController::class, 'getTransactionsOfUser']);
+
+    Route::get('transactions', [TransactionController::class, 'index']);
+    Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
+    Route::post('transactions', [TransactionController::class, 'store']);
+    Route::patch('transactions/{transaction}', [TransactionController::class, 'update']);
+    Route::delete('transactions/{transaction}', [TransactionController::class, 'delete']);
 });
