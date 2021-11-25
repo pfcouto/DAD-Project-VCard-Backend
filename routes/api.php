@@ -37,11 +37,11 @@ Route::middleware('auth:api')->group(function () {
 
     //USERS
     Route::get('users', [UserController::class, 'index']);
+    Route::get('users/me', [UserController::class, 'show_me']);
     Route::get('users/{user}', [UserController::class, 'show']);
     Route::put('users/{user}', [UserController::class, 'update']);
     Route::post('users', [UserController::class, 'store']);
     Route::patch('users/{user}/password', [UserController::class, 'update_password']);
-    Route::get('users/me', [UserController::class, 'show_me']);
 
 
 });
