@@ -7,20 +7,12 @@ use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\UserController;
 
-//USERS
-Route::get('users', [UserController::class, 'index']);
-Route::get('users/{user}', [UserController::class, 'show']);
-Route::put('users/{user}', [UserController::class, 'update']);
-Route::post('users', [UserController::class, 'store']);
-Route::patch('users/{user}/password', [UserController::class, 'update_password']);
-
-
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::get('users/me', [UserController::class, 'show_me']);
+
     Route::get('vcards/{vcard}/transactions', [TransactionController::class, 'getTransactionsOfVCard']);
 
     Route::get('transactions', [TransactionController::class, 'index']);
@@ -42,4 +34,14 @@ Route::middleware('auth:api')->group(function () {
     Route::put('vcards/{vcard}', [VCardController::class, 'update']); //->middleware('can:update,vcard');
     Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password']); //->middleware('can:updatePassword,vcard');
     Route::delete('vcards/{vcard}', [VCardController::class, 'destroy']);
+
+    //USERS
+    Route::get('users', [UserController::class, 'index']);
+    Route::get('users/{user}', [UserController::class, 'show']);
+    Route::put('users/{user}', [UserController::class, 'update']);
+    Route::post('users', [UserController::class, 'store']);
+    Route::patch('users/{user}/password', [UserController::class, 'update_password']);
+    Route::get('users/me', [UserController::class, 'show_me']);
+
+
 });
