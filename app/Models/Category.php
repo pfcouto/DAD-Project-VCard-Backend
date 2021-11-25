@@ -11,6 +11,8 @@ class Category extends Model
 
     protected $table = 'categories';
 
+    protected $fillable = ['id', 'vcard', 'type', 'name'];
+
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'category_id', 'id');

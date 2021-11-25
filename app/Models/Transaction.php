@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+    
+    protected $fillable = ['id', 'vcard', 'date', 'datetime', 'type', 'value', 'old_balance', 'new_balance', 'payment_type', 
+        'payment_reference', 'pair_transaction', 'pair_vcard', 'category_id', 'description'];
 
     public function payment_type()
     {
@@ -21,12 +25,12 @@ class Transaction extends Model
 
     public function vcard()
     {
-        return $this->belongsTo(VCard::class, 'vcard  ', 'phone_number');
+        return $this->belongsTo(VCard::class, 'vcard', 'phone_number');
     }
 
     public function pairVCard()
     {
-        return $this->belongsTo(VCard::class, 'pair_vcard  ', 'phone_number');
+        return $this->belongsTo(VCard::class, 'pair_vcard', 'phone_number');
     }
 
     public function pairTransactions()
