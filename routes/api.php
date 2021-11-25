@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\api\VCardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('vcards', [VCardController::class, 'index']);
+Route::post('vcards', [VCardController::class, 'store']);
+Route::get('vcards/me', [VCardController::class, 'show_me']);
+Route::get('vcards/{vcard}', [VCardController::class, 'show']); //->middleware('can:view,vcard');
+Route::put('vcards/{vcard}', [VCardController::class, 'update']); //->middleware('can:update,vcard');
+Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password']); //->middleware('can:updatePassword,vcard');
+Route::delete('vcards/{vcard}', [VCardController::class, 'destroy']);
