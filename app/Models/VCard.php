@@ -11,6 +11,7 @@ class VCard extends Model
 
     protected $primaryKey = 'phone_number';
     protected $keyType = 'string';
+    protected $table = "vcards";
 
     public function transactions()
     {
