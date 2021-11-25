@@ -22,7 +22,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::get('users/me', [UserController::class, 'show_me']);
-    Route::get('users/{user}/transactions', [TransactionController::class, 'getTransactionsOfUser']);
+    Route::get('vcards/{vcard}/transactions', [TransactionController::class, 'getTransactionsOfVCard']);
 
     Route::get('transactions', [TransactionController::class, 'index']);
     Route::get('transactions/{transaction}', [TransactionController::class, 'show']);

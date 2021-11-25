@@ -24,9 +24,9 @@ class TransactionController extends Controller
         return new TransactionResource($transaction);
     }
 
-    public function getTasksOfUser(User $user)
+    public function getTransactionsOfVCard(VCard $vcard)
     {
-        return TransactionResource::collection($user->transactions->sortByDesc('datetime'));
+        return TransactionResource::collection($vcard->transactions->sortByDesc('datetime'));
     }
 
     public function store(StoreTransactionRequest $request)
