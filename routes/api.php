@@ -1,8 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\VCardController;
+use App\Http\Controllers\api\TransactionController;
+use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,10 +17,25 @@ use App\Http\Controllers\api\VCardController;
 |
 */
 
-Route::get('vcards', [VCardController::class, 'index']);
-Route::post('vcards', [VCardController::class, 'store']);
-Route::get('vcards/me', [VCardController::class, 'show_me']);
-Route::get('vcards/{vcard}', [VCardController::class, 'show']); //->middleware('can:view,vcard');
-Route::put('vcards/{vcard}', [VCardController::class, 'update']); //->middleware('can:update,vcard');
-Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password']); //->middleware('can:updatePassword,vcard');
-Route::delete('vcards/{vcard}', [VCardController::class, 'destroy']);
+Route::post('login', [AuthController::class, 'login']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::get('users/me', [UserController::class, 'show_me']);
+    Route::get('vcards/{vcard}/transactions', [TransactionController::class, 'getTransactionsOfVCard']);
+
+    Route::get('transactions', [TransactionController::class, 'index']);
+    Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
+    Route::post('transactions', [TransactionController::class, 'store']);
+    Route::patch('transactions/{transaction}', [TransactionController::class, 'update']);
+    Route::delete('transactions/{transaction}', [TransactionController::class, 'delete']);
+
+    Route::get('vcards', [VCardController::class, 'index']);
+    Route::post('vcards', [VCardController::class, 'store']);
+    Route::get('vcards/me', [VCardController::class, 'show_me']);
+    Route::get('vcards/{vcard}', [VCardController::class, 'show']); //->middleware('can:view,vcard');
+    Route::put('vcards/{vcard}', [VCardController::class, 'update']); //->middleware('can:update,vcard');
+    Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password']); //->middleware('can:updatePassword,vcard');
+    Route::delete('vcards/{vcard}', [VCardController::class, 'destroy']);
+});
