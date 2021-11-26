@@ -8,6 +8,7 @@ use App\Http\Resources\VCardResource;
 use App\Models\VCard;
 use App\Http\Requests\StoreUpdateVCardRequest;
 use App\Http\Requests\UpdateVCardPasswordRequest;
+use App\Http\Resources\TransactionResource;
 
 class VCardController extends Controller
 {
@@ -24,6 +25,11 @@ class VCardController extends Controller
     public function show_me(Request $request)
     {
         return new VCardResource($request->vcard());
+    }
+
+    public function vcardTransactions(Vcard $vcard)
+    {
+        return TransactionResource::collection($vcard->transactions);
     }
 
     public function store(StoreUpdateVCardRequest $request)

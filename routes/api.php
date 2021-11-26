@@ -31,9 +31,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('vcards', [VCardController::class, 'store']);
     Route::get('vcards/me', [VCardController::class, 'show_me']);
     Route::get('vcards/{vcard}', [VCardController::class, 'show']); //->middleware('can:view,vcard');
+    Route::get('vcards/{vcard}/transactions', [VCardController::class, 'vcardTransactions']);
     Route::put('vcards/{vcard}', [VCardController::class, 'update']); //->middleware('can:update,vcard');
     Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password']); //->middleware('can:updatePassword,vcard');
     Route::delete('vcards/{vcard}', [VCardController::class, 'destroy']);
+
 
     //USERS
     Route::get('users', [UserController::class, 'index']);
@@ -42,6 +44,4 @@ Route::middleware('auth:api')->group(function () {
     Route::put('users/{user}', [UserController::class, 'update']);
     Route::post('users', [UserController::class, 'store']);
     Route::patch('users/{user}/password', [UserController::class, 'update_password']);
-
-
 });
