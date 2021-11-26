@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use App\Http\Resources\VCardResource;
 use App\Models\VCard;
 use App\Http\Requests\StoreUpdateVCardRequest;
+use App\Http\Requests\UpdateVCardBlockedRequest;
 use App\Http\Requests\UpdateVCardPasswordRequest;
 use App\Http\Resources\TransactionResource;
+use Facade\FlareClient\Http\Response;
 
 class VCardController extends Controller
 {
@@ -54,8 +56,17 @@ class VCardController extends Controller
         return new VCardResource($vcard);
     }
 
+    public function update_blocked(UpdateVCardBlockedRequest $request, VCard $vcard)
+    {
+        $vcard->blocked = $request->validated()['blocked'];
+        $vcard->save();
+        return new VCardResource($vcard);
+    }
+
     public function destroy($vcard)
     {
+        if ($vcard->balance > 0) return response('Trying to delete a vcard that has a positive Balance', 500);
+
         $vcard = VCard::withTrashed()->findOrFail($vcard);
 
         if ($vcard->transactions->count() > 0) {
