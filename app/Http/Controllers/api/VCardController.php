@@ -24,12 +24,8 @@ class VCardController extends Controller
 
     public function show_me(Request $request)
     {
-        return new VCardResource($request->vcard());
-    }
-
-    public function vcardTransactions(Vcard $vcard)
-    {
-        return TransactionResource::collection($vcard->transactions);
+        $vCardUser = VCard::findOrFail($request->username);
+        return new VCardResource($vCardUser);
     }
 
     public function store(StoreUpdateVCardRequest $request)
