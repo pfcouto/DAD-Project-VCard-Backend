@@ -10,4 +10,6 @@ class DefaultCategory extends Model
     use HasFactory;
 
     protected $table = 'default_categories';
+
+    protected $fillable = ['id', 'type', 'name'];
 }
