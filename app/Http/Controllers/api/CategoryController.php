@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -35,7 +36,7 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        $category->assignedUsers()->detach();
+        Transaction::where("category_id", $category->id)->delete();
         $category->delete();
         return new CategoryResource($category);
     }
