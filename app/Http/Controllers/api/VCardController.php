@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateVCardBlockedRequest;
 use App\Http\Requests\UpdateVCardPasswordRequest;
 use App\Http\Resources\TransactionResource;
 use Facade\FlareClient\Http\Response;
+use SebastianBergmann\Environment\Console;
 
 class VCardController extends Controller
 {
@@ -65,9 +66,9 @@ class VCardController extends Controller
 
     public function destroy($vcard)
     {
-        if ($vcard->balance > 0) return response('Trying to delete a vcard that has a positive Balance', 500);
-
         $vcard = VCard::withTrashed()->findOrFail($vcard);
+
+        if ($vcard->balance > 0) return response('Trying to delete a vcard that has a positive Balance', 500);
 
         if ($vcard->transactions->count() > 0) {
             //soft delete
