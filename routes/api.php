@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\VCardController;
 use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\DefaultCategoryController;
 use App\Http\Controllers\api\UserController;
 
 Route::post('login', [AuthController::class, 'login']);
@@ -26,6 +27,13 @@ Route::middleware('auth:api')->group(function () {
     Route::post('categories', [CategoryController::class, 'store']);
     Route::put('categories/{category}', [CategoryController::class, 'update']);
     Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
+
+    Route::get('defaultCategories', [DefaultCategoryController::class, 'index']);
+    Route::get('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'show']);
+    Route::post('defaultCategories', [DefaultCategoryController::class, 'store']);
+    Route::put('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'update']);
+    Route::delete('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'destroy']);
+
     // Route::get('categories/{category}/transactions', [CategoryController::class, 'geTransactionsOfCategories']);
     Route::get('vcards', [VCardController::class, 'index']);
     Route::post('vcards', [VCardController::class, 'store']);

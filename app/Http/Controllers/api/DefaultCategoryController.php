@@ -8,7 +8,7 @@ use App\Http\Resources\DefaultCategoryResource;
 use App\Models\DefaultCategory;
 use Illuminate\Http\Request;
 
-class DefaultCategoriesController extends Controller
+class DefaultCategoryController extends Controller
 {
     public function index()
     {
