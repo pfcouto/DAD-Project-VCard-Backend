@@ -34,7 +34,7 @@ class DefaultCategoryController extends Controller
 
     public function destroy(DefaultCategory $defaultCategory)
     {
-        $defaultCategory->assignedUsers()->detach();
+        // $defaultCategory->assignedUsers()->detach();
         $defaultCategory->delete();
         return new DefaultCategoryResource($defaultCategory);
     }
