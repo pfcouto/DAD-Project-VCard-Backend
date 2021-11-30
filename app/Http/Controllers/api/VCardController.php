@@ -7,8 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Resources\VCardResource;
 use App\Models\VCard;
 use App\Http\Requests\StoreUpdateVCardRequest;
+use App\Http\Requests\UpdateVCardBlockedRequest;
 use App\Http\Requests\UpdateVCardPasswordRequest;
 use App\Http\Resources\TransactionResource;
+use Facade\FlareClient\Http\Response;
+use SebastianBergmann\Environment\Console;
 
 class VCardController extends Controller
 {
@@ -24,12 +27,8 @@ class VCardController extends Controller
 
     public function show_me(Request $request)
     {
-        return new VCardResource($request->vcard());
-    }
-
-    public function vcardTransactions(Vcard $vcard)
-    {
-        return TransactionResource::collection($vcard->transactions);
+        $vCardUser = VCard::findOrFail($request->username);
+        return new VCardResource($vCardUser);
     }
 
     public function store(StoreUpdateVCardRequest $request)
@@ -53,7 +52,14 @@ class VCardController extends Controller
 
     public function update_password(UpdateVCardPasswordRequest $request, VCard $vcard)
     {
-        $vcard->password = bcrypt($request->validated()['newPassword']);
+        $vcard->password = bcrypt($request->validated()['password']);
+        $vcard->save();
+        return new VCardResource($vcard);
+    }
+
+    public function update_blocked(UpdateVCardBlockedRequest $request, VCard $vcard)
+    {
+        $vcard->blocked = $request->validated()['blocked'];
         $vcard->save();
         return new VCardResource($vcard);
     }
@@ -61,6 +67,8 @@ class VCardController extends Controller
     public function destroy($vcard)
     {
         $vcard = VCard::withTrashed()->findOrFail($vcard);
+
+        if ($vcard->balance > 0) return response('Trying to delete a vcard that has a positive Balance', 500);
 
         if ($vcard->transactions->count() > 0) {
             //soft delete
