@@ -11,7 +11,7 @@ class DefaultCategory extends Model
     use HasFactory;
 
     use SoftDeletes;
-    public $timestamps = false;
+    // public $timestamps = false;
 
     protected $table = 'default_categories';
 
