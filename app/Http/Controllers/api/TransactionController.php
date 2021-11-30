@@ -26,7 +26,7 @@ class TransactionController extends Controller
 
     public function getTransactionsOfVCard(VCard $vcard)
     {
-        return TransactionResource::collection($vcard->transactions->sortByDesc('datetime'));
+        return TransactionResource::collection(Transaction::where('vcard', $vcard->phone_number)->orderByDesc('datetime')->paginate(10));
     }
 
     public function store(StoreTransactionRequest $request)
@@ -52,9 +52,9 @@ class TransactionController extends Controller
         if ($validated_data['payment_type'] == 'VCARD') {
             $paymentReferenceValidator = Validator::make(
                 $validated_data,
-                ['payment_reference' => [function ($attribute, $value, $fail) use ($validated_data) {
-                    if ($value != $validated_data['pair_vcard']) {
-                        $fail('Payment Reference VCard doesn\'t match the Pair VCard');
+                ['payment_reference' => [function ($attribute, $value, $fail) {
+                    if (!VCard::find($value)) {
+                        $fail('This VCard doesn\'t exist');
                     }
                 }]]
             );
@@ -82,7 +82,7 @@ class TransactionController extends Controller
             $transaction->save();
 
             if ($validated_data['payment_type'] == 'VCARD') {
-                $pairVCard = VCard::where('phone_number', $validated_data['pair_vcard'])->first();
+                $pairVCard = VCard::where('phone_number', $validated_data['payment_reference'])->first();
                 $pairTransaction = new Transaction($validated_data);
 
                 $pairTransaction->vcard = $pairVCard->phone_number;
@@ -91,6 +91,8 @@ class TransactionController extends Controller
                 $pairTransaction->old_balance = $pairVCard->balance;
                 $pairTransaction->pair_transaction = $transaction->id;
                 $pairTransaction->payment_reference = $vCard->phone_number;
+                $pairTransaction->description = null;
+                $pairTransaction->category_id = null;
 
                 $pairVCard->balance += -1 * $multiplier * $transaction->value;
                 $pairVCard->save();
@@ -100,6 +102,7 @@ class TransactionController extends Controller
                 $pairTransaction->type = $validated_data['type'] == 'C' ? 'D' : 'C';
                 $pairTransaction->save();
                 $transaction->pair_transaction = $pairTransaction->id;
+                $transaction->pair_vcard = $pairVCard->phone_number;
                 $transaction->save();
             }
 

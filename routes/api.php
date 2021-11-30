@@ -6,6 +6,7 @@ use App\Http\Controllers\api\VCardController;
 use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\PaymentTypeController;
 
 Route::post('login', [AuthController::class, 'login']);
 
@@ -43,5 +44,5 @@ Route::middleware('auth:api')->group(function () {
     Route::post('users', [UserController::class, 'store']);
     Route::patch('users/{user}/password', [UserController::class, 'update_password']);
 
-
+    Route::get('paymenttypes', [PaymentTypeController::class, 'index']);
 });
