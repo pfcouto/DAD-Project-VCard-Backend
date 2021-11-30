@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class VCardResource extends JsonResource
+class AdministratorResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,16 +15,9 @@ class VCardResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'phone_number' => $this->phone_number,
+            'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'photo_url' => $this->photo_url,
-            //'confirmation_code' => $this->confirmation_code,
-            'blocked' => $this->blocked,
-            'balance' => $this->balance,
-            'max_debit' => $this->max_debit,
-            // 'custom_options' => $this->custom_options,
-            // 'custom_data' => $this->custom_data,
         ];
     }
 }

@@ -29,7 +29,6 @@ class StoreTransactionRequest extends FormRequest
             'value' => 'required|numeric|min:0.01',
             'payment_type' => 'required|exists:payment_types,code',
             'payment_reference' => 'required|string|max:255',
-            'pair_vcard' => 'nullable|exists:vcards,phone_number',
             'category_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string|max:255'
         ];
