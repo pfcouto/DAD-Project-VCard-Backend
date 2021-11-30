@@ -34,6 +34,7 @@ class AdministratorController extends Controller
         $newAdministrator = Administrator::create($request->validated());
         $newAdministrator->password = bcrypt($request->validated()['password']);
         $newAdministrator->save();
+        return new AdministratorResource($newAdministrator);
     }
 
     public function update_password(UpdateAdministratorPasswordRequest $request, Administrator $administrator)
@@ -41,5 +42,11 @@ class AdministratorController extends Controller
         $administrator->password = bcrypt($request->validated()['password']);
         $administrator->save();
         return new AdministratorResource($administrator);
+    }
+
+    public function delete(Administrator $administrator)
+    {
+        $administrator->delete();
+        return response()->json(null, 204);
     }
 }

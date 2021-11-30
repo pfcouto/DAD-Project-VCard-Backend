@@ -48,4 +48,5 @@ Route::middleware('auth:api')->group(function () {
     Route::put('administrators/{administrator}', [AdministratorController::class, 'update']);
     Route::post('administrators', [AdministratorController::class, 'store']);
     Route::patch('administrators/{administrator}/password', [AdministratorController::class, 'update_password']);
+    Route::delete('administrators/{administrator}', [AdministratorController::class, 'delete']);
 });
