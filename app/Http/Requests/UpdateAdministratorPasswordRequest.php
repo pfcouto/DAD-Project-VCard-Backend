@@ -25,7 +25,13 @@ class UpdateAdministratorPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'password' => ['required', 'confirmed', Password::min(4)],//TODO
+            'password' => [
+                'required', 'confirmed',
+                Password::min(4)
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+            ],
             'oldpassword' => 'current_password:api',
         ];
     }
