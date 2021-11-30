@@ -32,7 +32,7 @@ class StoreUpdateVCardRequest extends FormRequest
             // 'confirmation_code' => 'required|digits:4',
             'blocked' => 'required|digits:1',
             'balance' => ['required', 'regex:/^(^\d{1,7}\.\d{2}$)|(^\d{1,8}\.\d{1}$)|(^\d{1,9}$)$/'],
-            // //'max_debit' => ['required', 'regex:/^(^\d{1,7}\.\d{2}$)|(^\d{1,8}\.\d{1}$)|(^\d{1,9}$)$/'],
+            'max_debit' => ['required', 'regex:/^(^\d{1,7}\.\d{2}$)|(^\d{1,8}\.\d{1}$)|(^\d{1,9}$)$/'],
             'custom_options' => 'nullable|json',
             'custom_data' => 'nullable|json',
         ];

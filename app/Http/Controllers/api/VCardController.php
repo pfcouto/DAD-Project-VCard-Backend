@@ -52,7 +52,7 @@ class VCardController extends Controller
 
     public function update_password(UpdateVCardPasswordRequest $request, VCard $vcard)
     {
-        $vcard->password = bcrypt($request->validated()['newPassword']);
+        $vcard->password = bcrypt($request->validated()['password']);
         $vcard->save();
         return new VCardResource($vcard);
     }
