@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\VCardResource;
 use App\Models\VCard;
-use App\Http\Requests\StoreUpdateVCardRequest;
+use App\Http\Requests\UpdateVCardRequest;
+use App\Http\Requests\StoreVCardRequest;
 use App\Http\Requests\UpdateVCardBlockedRequest;
 use App\Http\Requests\UpdateVCardPasswordRequest;
 use App\Http\Requests\UpdateVCardCodeRequest;
@@ -30,20 +31,21 @@ class VCardController extends Controller
         return new VCardResource($vCardUser);
     }
 
-    public function store(StoreUpdateVCardRequest $request)
+    public function store(StoreVCardRequest $request)
     {
         $newVCard = $request->validated();
         $newVCard['balance'] = 0;
         $newVCard['blocked'] = 0;
         $newVCard['max_debit'] = 5000;
         $newVCard['password'] = bcrypt($newVCard['password']);
+        $newVCard['confirmation_code'] = bcrypt($newVCard['confirmation_code']);
 
         $createdVCard = VCard::create($newVCard);
 
         return new VCardResource($createdVCard);
     }
 
-    public function update(StoreUpdateVCardRequest $request, VCard $vcard)
+    public function update(UpdateVCardRequest $request, VCard $vcard)
     {
         $vcard->update($request->validated());
         return new VCardResource($vcard);
