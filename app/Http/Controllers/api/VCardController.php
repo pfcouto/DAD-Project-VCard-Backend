@@ -9,9 +9,8 @@ use App\Models\VCard;
 use App\Http\Requests\StoreUpdateVCardRequest;
 use App\Http\Requests\UpdateVCardBlockedRequest;
 use App\Http\Requests\UpdateVCardPasswordRequest;
-use App\Http\Resources\TransactionResource;
-use Facade\FlareClient\Http\Response;
-use SebastianBergmann\Environment\Console;
+use App\Http\Requests\UpdateVCardCodeRequest;
+
 
 class VCardController extends Controller
 {
@@ -47,6 +46,13 @@ class VCardController extends Controller
     public function update(StoreUpdateVCardRequest $request, VCard $vcard)
     {
         $vcard->update($request->validated());
+        return new VCardResource($vcard);
+    }
+
+    public function update_code(UpdateVCardCodeRequest $request, VCard $vcard)
+    {
+        $vcard->confirmation_code = bcrypt($request->validated()['code']);
+        $vcard->save();
         return new VCardResource($vcard);
     }
 

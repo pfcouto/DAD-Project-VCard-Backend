@@ -41,6 +41,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('vcards/{vcard}', [VCardController::class, 'show']); //->middleware('can:view,vcard');
     Route::put('vcards/{vcard}', [VCardController::class, 'update']); //->middleware('can:update,vcard');
     Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password']); //->middleware('can:updatePassword,vcard');
+    Route::patch('vcards/{vcard}/code', [VCardController::class, 'update_code']); //->middleware('can:updatePassword,vcard');
     Route::patch('vcards/{vcard}/blocked', [VCardController::class, 'update_blocked']); //->middleware('can:updateBlocked,vcard');
     Route::delete('vcards/{vcard}', [VCardController::class, 'destroy']);
 
