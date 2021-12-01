@@ -22,6 +22,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('transactions/{transaction}', [TransactionController::class, 'update']);
     Route::delete('transactions/{transaction}', [TransactionController::class, 'delete']);
 
+    Route::get('vcards/{vcard}/categories', [CategoryController::class, 'getCategoriesOfVCard']);
     Route::get('categories', [CategoryController::class, 'index']);
     Route::get('categories/{category}', [CategoryController::class, 'show']);
     Route::post('categories', [CategoryController::class, 'store']);
