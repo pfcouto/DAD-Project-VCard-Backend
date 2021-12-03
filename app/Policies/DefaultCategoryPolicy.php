@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\DefaultCategory;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -11,35 +12,26 @@ class DefaultCategoryPolicy
 
     public function viewAny(User $user)
     {
-        // dd($user->user_type);
-        // return ($user->user_type == "A");
-        return true;
+        return $user->user_type == "A";
     }
 
-    public function view(User $user, User $model)
+    public function view(User $user, DefaultCategory $defaultCategory)
     {
-        dd($user->user_type);
-        return $user->user_type == "A" || $user->username == $model->username;
+        return $user->user_type == "A";
     }
 
     public function create(User $user)
     {
-        dd($user->user_type);
-
-        return ($user->user_type == "A");
+        return $user->user_type == "A";
     }
 
-    public function update(User $user, User $model)
+    public function update(User $user, DefaultCategory $defaultCategory)
     {
-        dd($user->user_type);
-
-        return $user->type == "A" || $user->username == $model->username;
+        return $user->user_type == "A";
     }
 
-    public function destroy(User $user, User $model)
+    public function destroy(User $user, DefaultCategory $defaultCategory)
     {
-        dd($user->user_type);
-
-        return $user->type == "A" || $user->username == $model->username;
+        return $user->user_type == "A";
     }
 }
