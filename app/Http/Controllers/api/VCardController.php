@@ -43,25 +43,25 @@ class VCardController extends Controller
         $newVCard['password'] = bcrypt($newVCard['password']);
         $newVCard['confirmation_code'] = bcrypt($newVCard['confirmation_code']);
 
-        $createdVCard = VCard::create($newVCard);
 
-        $categories = DefaultCategory::all();
 
         DB::beginTransaction();
+
+        $createdVCard = VCard::create($newVCard);
+
+        $categories = DefaultCategory::all($columns = ['type', 'name']);
 
         try {
             foreach ($categories as $category) {
                 $category['vcard'] = $createdVCard->phone_number;
-                Category::create($category);
+                Category::create($category->toArray());
             }
+            DB::commit();
+            return new VCardResource($createdVCard);
         } catch (Exception $e) {
             DB::rollback();
-            die($e);
+            return response($e, 500);
         }
-
-        DB::commit();
-
-        return new VCardResource($createdVCard);
     }
 
     public function update(UpdateVCardRequest $request, VCard $vcard)
