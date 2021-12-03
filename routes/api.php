@@ -9,6 +9,7 @@ use App\Http\Controllers\api\DefaultCategoryController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\api\AdministratorController;
+use App\Http\Controllers\api\StatisticsController;
 
 Route::post('login', [AuthController::class, 'login']);
 
@@ -58,4 +59,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('administrators', [AdministratorController::class, 'store']);
     Route::patch('administrators/{administrator}/password', [AdministratorController::class, 'update_password']);
     Route::delete('administrators/{administrator}', [AdministratorController::class, 'delete']);
+
+    //STATISTICS
+    Route::get('statistics/sumbymonthyear', [StatisticsController::class, 'sumbymonthyear']);
+    Route::get('statistics/countpaymentype', [StatisticsController::class, 'countPaymentType']);
+    Route::get('statistics/counters', [StatisticsController::class, 'counters']);
+
 });
