@@ -11,7 +11,10 @@ use App\Http\Requests\StoreVCardRequest;
 use App\Http\Requests\UpdateVCardBlockedRequest;
 use App\Http\Requests\UpdateVCardPasswordRequest;
 use App\Http\Requests\UpdateVCardCodeRequest;
-
+use App\Models\Category;
+use App\Models\DefaultCategory;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class VCardController extends Controller
 {
@@ -41,6 +44,22 @@ class VCardController extends Controller
         $newVCard['confirmation_code'] = bcrypt($newVCard['confirmation_code']);
 
         $createdVCard = VCard::create($newVCard);
+
+        $categories = DefaultCategory::all();
+
+        DB::beginTransaction();
+
+        try {
+            foreach ($categories as $category) {
+                $category['vcard'] = $createdVCard->phone_number;
+                Category::create($category);
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            die($e);
+        }
+
+        DB::commit();
 
         return new VCardResource($createdVCard);
     }
