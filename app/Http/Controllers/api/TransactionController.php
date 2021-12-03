@@ -7,10 +7,11 @@ use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
+use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use App\Models\VCard;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class TransactionController extends Controller
 {
@@ -52,18 +53,42 @@ class TransactionController extends Controller
         if ($validated_data['payment_type'] == 'VCARD') {
             $paymentReferenceValidator = Validator::make(
                 $validated_data,
-                ['payment_reference' => [function ($attribute, $value, $fail) {
+                ['payment_reference' => [function ($attribute, $value, $fail) use ($validated_data) {
                     if (!VCard::find($value)) {
                         $fail('This VCard doesn\'t exist');
+                    } else if ($value == $validated_data["vcard"]){
+                        $fail('Cannot Debit to the your own vcard');
                     }
                 }]]
             );
             $paymentReferenceValidator->validate();
         }
 
+        if (array_key_exists('category_id', $validated_data)) {
+            $categoryValidator = Validator::make(
+                $validated_data,
+                ['category_id' => [function ($attribute, $value, $fail) use ($validated_data) {
+                    if (!Category::where('id', $value)->where('vcard', $validated_data['vcard'])) {
+                        $fail('Invalid category');
+                    }
+                }]]
+            );
+            $categoryValidator->validate();
+        }
+
+        $confirmationCodeValidator = Validator::make(
+            $validated_data,
+            ['confirmation_code' => [function ($attribute, $value, $fail) use ($vCard) {
+                if (!Hash::check($value, $vCard->confirmation_code)){
+                    $fail('Invalid confirmation code');
+                }
+            }]]
+        );
+        $confirmationCodeValidator->validate();
+
         $transaction = new Transaction($validated_data);
         $date = date('Y-m-d');
-        $dateTime = date('Y-m-d h:i:s');
+        $dateTime = date('Y-m-d H:i:s');
         $multiplier = -1;
 
         if ($validated_data['type'] == 'C')

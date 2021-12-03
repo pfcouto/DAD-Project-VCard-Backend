@@ -30,7 +30,8 @@ class StoreTransactionRequest extends FormRequest
             'payment_type' => 'required|exists:payment_types,code',
             'payment_reference' => 'required|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
-            'description' => 'nullable|string|max:255'
+            'description' => 'nullable|string|max:255',
+            'confirmation_code' => 'required|string|min:4|max:4'
         ];
     }
     
