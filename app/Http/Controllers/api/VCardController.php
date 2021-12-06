@@ -20,7 +20,7 @@ class VCardController extends Controller
 {
     public function index()
     {
-        return VCardResource::collection(VCard::all());
+        return VCardResource::collection(VCard::paginate(10));
     }
 
     public function show(VCard $vcard)
@@ -43,7 +43,10 @@ class VCardController extends Controller
         $newVCard['password'] = bcrypt($newVCard['password']);
         $newVCard['confirmation_code'] = bcrypt($newVCard['confirmation_code']);
 
-
+        if ($request->hasFile('photo_url')) {
+            $path = $request->photo_url->store('public/fotos');
+            $newVCard['photo_url'] = basename($path);
+        }
 
         DB::beginTransaction();
 
@@ -66,7 +69,14 @@ class VCardController extends Controller
 
     public function update(UpdateVCardRequest $request, VCard $vcard)
     {
-        $vcard->update($request->validated());
+        $newVCard = $request->validated();
+
+        if ($request->hasFile('photo_url')) {
+            $path = $request->photo_url->store('public/fotos');
+            $newVCard['photo_url'] = basename($path);
+        }
+
+        $vcard->update($newVCard);
         return new VCardResource($vcard);
     }
 

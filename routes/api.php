@@ -30,14 +30,14 @@ Route::middleware('auth:api')->group(function () {
     Route::put('categories/{category}', [CategoryController::class, 'update']);
     Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
 
-    Route::get('defaultCategories', [DefaultCategoryController::class, 'index']);/*->middleware('can:viewAny, user')*/
+    Route::get('defaultCategories', [DefaultCategoryController::class, 'index']);/*->middleware('can:viewAny,user')*/
     Route::get('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'show']);/*->middleware('can:view,user')*/
     Route::post('defaultCategories', [DefaultCategoryController::class, 'store']);
     Route::put('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'update']);/*->middleware('can:update,user')*/
     Route::delete('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'destroy']);/*->middleware('can:destroy,user')*/
 
     // VCARDS
-    Route::get('vcards', [VCardController::class, 'index']); //->middleware('can:viewAny', User::class);
+    Route::get('vcards', [VCardController::class, 'index']); //->middleware('can:viewAny');
     // Route::get('vcards/me', [VCardController::class, 'show_me']);
     Route::get('vcards/{vcard}', [VCardController::class, 'show']); //->middleware('can:view,vcard');
     Route::put('vcards/{vcard}', [VCardController::class, 'update']); //->middleware('can:update,vcard');
