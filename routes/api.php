@@ -64,5 +64,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/sumbymonthyear', [StatisticsController::class, 'sumbymonthyear']);
     Route::get('statistics/countpaymentype', [StatisticsController::class, 'countPaymentType']);
     Route::get('statistics/counters', [StatisticsController::class, 'counters']);
+    Route::get('statistics/categories', [StatisticsController::class, 'categories']);
 
 });

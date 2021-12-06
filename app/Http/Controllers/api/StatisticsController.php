@@ -39,13 +39,23 @@ class StatisticsController extends Controller
     public function counters()
     {
         if(auth::user()->user_type == 'A'){
-            $array = DB::select('select sum(balance) as balance,count(blocked) as vcards, avg(balance) as average,(select count(*) from transactions) as transactionCount from vcards');
+            $array = DB::select('select sum(balance) as balance,count(blocked) as vcards, round(avg(balance),2) as average,(select count(*) from transactions) as transactionCount from vcards');
         }
         else{
-            $array = DB::select('select sum(value)as value,count(*) as numTransactions,AVG(old_balance) as avgBalance ,max(value) as highestTransaction from transactions where vcard = '.auth::user()->username);
+            $array = DB::select('select sum(value)as value,count(*) as numTransactions,round(AVG(old_balance),2) as avgBalance ,max(value) as highestTransaction from transactions where vcard = '.auth::user()->username);
         }
         return response()->json($array);
 
+    }
+
+    public function categories(){
+        if(auth::user()->user_type == 'A'){
+            $array = DB::select('select c.name, count(c.name) as count from transactions t inner join categories c on t.category_id = c.id group by c.name order by count desc limit 5');
+        }
+        else{
+            $array = DB::select('select c.name, count(c.name) as count from transactions t inner join categories c on t.category_id = c.id where c.vcard = '.auth::user()->username .' group by c.name order by count desc limit 5');
+        }
+        return response()->json($array);
     }
 
 
