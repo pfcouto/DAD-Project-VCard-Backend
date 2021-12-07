@@ -23,17 +23,20 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('transactions/{transaction}', [TransactionController::class, 'update']);
     Route::delete('transactions/{transaction}', [TransactionController::class, 'delete']);
 
-    Route::get('categories', [CategoryController::class, 'index']);
-    Route::get('categories/{category}', [CategoryController::class, 'show']);
-    Route::post('categories', [CategoryController::class, 'store']);
-    Route::put('categories/{category}', [CategoryController::class, 'update']);
-    Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
+    // CATEGORIES
+    Route::get('vcards/{vcard}/categories', [CategoryController::class, 'getCategoriesOfVCard'])->middleware('can:viewCategoriesOfVCard,vcard');
+    // Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('categories/{category}', [CategoryController::class, 'show'])->middleware('can:view,category');
+    Route::post('categories', [CategoryController::class, 'store'])->middleware('can:create,App\Models\Category');
+    Route::put('categories/{category}', [CategoryController::class, 'update'])->middleware('can:update,category');
+    Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->middleware('can:destroy,category');
 
-    Route::get('defaultCategories', [DefaultCategoryController::class, 'index']);/*->middleware('can:viewAny, user')*/
-    Route::get('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'show']);/*->middleware('can:view,user')*/
-    Route::post('defaultCategories', [DefaultCategoryController::class, 'store']);
-    Route::put('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'update']);/*->middleware('can:update,user')*/
-    Route::delete('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'destroy']);/*->middleware('can:destroy,user')*/
+    // DEFAULT CATEGORIES
+    Route::get('defaultCategories', [DefaultCategoryController::class, 'index'])->middleware('can:viewAny,App\Models\DefaultCategory');
+    Route::get('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'show'])->middleware('can:view,defaultCategory');
+    Route::post('defaultCategories', [DefaultCategoryController::class, 'store'])->middleware('can:viewAny,App\Models\DefaultCategory');
+    Route::put('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'update'])->middleware('can:update,defaultCategory');
+    Route::delete('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'destroy'])->middleware('can:destroy,defaultCategory');
 
     // Route::get('categories/{category}/transactions', [CategoryController::class, 'geTransactionsOfCategories']);
     Route::get('vcards', [VCardController::class, 'index']);
