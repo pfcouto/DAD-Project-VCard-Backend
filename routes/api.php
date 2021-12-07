@@ -61,9 +61,12 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('administrators/{administrator}', [AdministratorController::class, 'delete']);
 
     //STATISTICS
-    Route::get('statistics/sumbymonthyear', [StatisticsController::class, 'sumbymonthyear']);
+    Route::get('statistics/sumbymonthyear' ,[StatisticsController::class, 'sumbymonthyear']);
+    Route::get('statistics/sumbymonthyear/{year}' ,[StatisticsController::class, 'sumbymonthyearFilterYear']);
     Route::get('statistics/countpaymentype', [StatisticsController::class, 'countPaymentType']);
+    Route::get('statistics/countpaymentype/{year}', [StatisticsController::class, 'countPaymentTypeFilterYear']);
     Route::get('statistics/counters', [StatisticsController::class, 'counters']);
     Route::get('statistics/categories', [StatisticsController::class, 'categories']);
-
+    Route::get('statistics/categories/{year}', [StatisticsController::class, 'categoriesFilterYear']);
+    Route::get('statistics/getYears', [StatisticsController::class, 'getYears']);
 });
