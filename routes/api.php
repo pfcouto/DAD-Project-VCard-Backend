@@ -71,5 +71,5 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/counters', [StatisticsController::class, 'counters']);
     Route::get('statistics/categories', [StatisticsController::class, 'categories']);
     Route::get('statistics/categories/{year}', [StatisticsController::class, 'categoriesFilterYear']);
-    Route::get('statistics/getYears', [StatisticsController::class, 'getYears']);
+    Route::get('statistics/years', [StatisticsController::class, 'years']);
 });

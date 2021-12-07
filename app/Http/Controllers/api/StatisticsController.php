@@ -118,7 +118,7 @@ class StatisticsController extends Controller
         }
     }
 
-    public function getYears()
+    public function years()
     {
         if (auth::user()->user_type == 'A') {
             $array = DB::select('select year(date) as year from transactions group by year');
