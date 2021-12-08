@@ -2,44 +2,46 @@
 
 namespace App\Policies;
 
+use App\Models\Category;
 use App\Models\User;
+use App\Models\Vcard;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CategoryPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user)
+    public function viewCategoriesOfVCard(VCard $vcard)
     {
-        dd($user->user_type);
-        return ($user->user_type == "V");
+        // dd($vcard->phone_number);
+        // if ($vcard->phone_number) {
+        return true;
+        // }
+        // return false;
     }
 
-    public function view(User $user, User $model)
+    public function view(User $user, Category $category)
     {
-        dd($user->user_type);
 
-        return $user->user_type == "V" || $user->username == $model->username;
+        return $user->user_type == "V" && $user->username == $category->vcard;
     }
 
     public function create(User $user)
     {
-        dd($user->user_type);
-
-        return ($user->user_type == "V");
+        return $user->user_type == "V";
     }
 
-    public function update(User $user, User $model)
+    public function update(User $user, Category $category)
     {
-        dd($user->user_type);
 
-        return $user->type == "V" || $user->username == $model->username;
+        return $user->user_type == "V"
+            && $user->username == $category->vcard;
     }
 
-    public function destroy(User $user, User $model)
+    public function destroy(User $user, Category $category)
     {
-        dd($user->user_type);
 
-        return $user->type == "V" || $user->username == $model->username;
+        return $user->user_type == "V"
+            && $user->username == $category->vcard;
     }
 }
