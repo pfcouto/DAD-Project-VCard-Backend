@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\VCard;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
@@ -25,9 +26,32 @@ class TransactionController extends Controller
         return new TransactionResource($transaction);
     }
 
-    public function getTransactionsOfVCard(VCard $vcard)
+    public function getTransactionsOfVCard(Request $request, VCard $vcard)
     {
-        return TransactionResource::collection(Transaction::where('vcard', $vcard->phone_number)->orderByDesc('datetime')->paginate(10));
+        $category = $request->category ?? '';
+        $order = $request->order ?? '';
+        $type = $request->type ?? '';
+
+        $qry = Transaction::query()->where('vcard', $vcard->phone_number);
+
+        if ($category) {
+            $qry->where('category_id', $category);
+        }
+
+        if ($type) {
+            $qry->where('type', $type);
+        }
+
+        switch($order){
+            case 'asc': 
+                $qry->orderBy('datetime', 'asc');
+                break;
+            case 'desc': 
+                $qry->orderBy('datetime', 'desc');
+                break;
+        }
+
+        return TransactionResource::collection($qry->paginate(10));
     }
 
     public function store(StoreTransactionRequest $request)
