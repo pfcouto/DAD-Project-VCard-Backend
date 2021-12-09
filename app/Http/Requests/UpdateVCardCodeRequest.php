@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
-class UpdateVCardPasswordRequest extends FormRequest
+class UpdateVCardCodeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,14 +24,8 @@ class UpdateVCardPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'password' => [
-                'required', 'confirmed', 'different:oldpassword',
-                Password::min(4)
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-            ],
-            'oldpassword' => 'current_password:api',
+            'code' => 'required|confirmed|digits:4|different:oldcode',
+            'oldcode' => '',
         ];
     }
 }

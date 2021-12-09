@@ -12,6 +12,7 @@ use App\Http\Controllers\api\AdministratorController;
 use App\Http\Controllers\api\StatisticsController;
 
 Route::post('login', [AuthController::class, 'login']);
+Route::post('vcards', [VCardController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -38,15 +39,15 @@ Route::middleware('auth:api')->group(function () {
     Route::put('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'update'])->middleware('can:update,defaultCategory');
     Route::delete('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'destroy'])->middleware('can:destroy,defaultCategory');
 
-    // Route::get('categories/{category}/transactions', [CategoryController::class, 'geTransactionsOfCategories']);
-    Route::get('vcards', [VCardController::class, 'index']);
-    Route::post('vcards', [VCardController::class, 'store']);
-    Route::get('vcards/me', [VCardController::class, 'show_me']);
+    // VCARDS
+    Route::get('vcards', [VCardController::class, 'index']); //->middleware('can:viewAny');
+    // Route::get('vcards/me', [VCardController::class, 'show_me']);
     Route::get('vcards/{vcard}', [VCardController::class, 'show']); //->middleware('can:view,vcard');
     Route::put('vcards/{vcard}', [VCardController::class, 'update']); //->middleware('can:update,vcard');
     Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password']); //->middleware('can:updatePassword,vcard');
-    Route::patch('vcards/{vcard}/blocked', [VCardController::class, 'update_blocked']); //->middleware('can:updateBlocked,vcard');
-    Route::delete('vcards/{vcard}', [VCardController::class, 'destroy']);
+    Route::patch('vcards/{vcard}/code', [VCardController::class, 'update_code']); //->middleware('can:updateCode,vcard');
+    Route::patch('vcards/{vcard}/blocked', [VCardController::class, 'update_blocked']); //->middleware('can:updateBlock,vcard');
+    Route::delete('vcards/{vcard}', [VCardController::class, 'destroy']); //->middleware('can:delete,vcard');
 
     //USERS
     Route::get('users', [UserController::class, 'index']);

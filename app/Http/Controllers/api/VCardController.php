@@ -6,18 +6,21 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\VCardResource;
 use App\Models\VCard;
-use App\Http\Requests\StoreUpdateVCardRequest;
+use App\Http\Requests\UpdateVCardRequest;
+use App\Http\Requests\StoreVCardRequest;
 use App\Http\Requests\UpdateVCardBlockedRequest;
 use App\Http\Requests\UpdateVCardPasswordRequest;
-use App\Http\Resources\TransactionResource;
-use Facade\FlareClient\Http\Response;
-use SebastianBergmann\Environment\Console;
+use App\Http\Requests\UpdateVCardCodeRequest;
+use App\Models\Category;
+use App\Models\DefaultCategory;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class VCardController extends Controller
 {
     public function index()
     {
-        return VCardResource::collection(VCard::all());
+        return VCardResource::collection(VCard::paginate(10));
     }
 
     public function show(VCard $vcard)
@@ -31,22 +34,56 @@ class VCardController extends Controller
         return new VCardResource($vCardUser);
     }
 
-    public function store(StoreUpdateVCardRequest $request)
+    public function store(StoreVCardRequest $request)
     {
         $newVCard = $request->validated();
         $newVCard['balance'] = 0;
         $newVCard['blocked'] = 0;
         $newVCard['max_debit'] = 5000;
         $newVCard['password'] = bcrypt($newVCard['password']);
+        $newVCard['confirmation_code'] = bcrypt($newVCard['confirmation_code']);
+
+        if ($request->hasFile('photo_url')) {
+            $path = $request->photo_url->store('public/fotos');
+            $newVCard['photo_url'] = basename($path);
+        }
+
+        DB::beginTransaction();
 
         $createdVCard = VCard::create($newVCard);
 
-        return new VCardResource($createdVCard);
+        $categories = DefaultCategory::all($columns = ['type', 'name']);
+
+        try {
+            foreach ($categories as $category) {
+                $category['vcard'] = $createdVCard->phone_number;
+                Category::create($category->toArray());
+            }
+            DB::commit();
+            return new VCardResource($createdVCard);
+        } catch (Exception $e) {
+            DB::rollback();
+            return response($e, 500);
+        }
     }
 
-    public function update(StoreUpdateVCardRequest $request, VCard $vcard)
+    public function update(UpdateVCardRequest $request, VCard $vcard)
     {
-        $vcard->update($request->validated());
+        $newVCard = $request->validated();
+
+        if ($request->hasFile('photo_url')) {
+            $path = $request->photo_url->store('public/fotos');
+            $newVCard['photo_url'] = basename($path);
+        }
+
+        $vcard->update($newVCard);
+        return new VCardResource($vcard);
+    }
+
+    public function update_code(UpdateVCardCodeRequest $request, VCard $vcard)
+    {
+        $vcard->confirmation_code = bcrypt($request->validated()['code']);
+        $vcard->save();
         return new VCardResource($vcard);
     }
 
