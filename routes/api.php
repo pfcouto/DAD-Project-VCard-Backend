@@ -9,11 +9,7 @@ use App\Http\Controllers\api\DefaultCategoryController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\api\AdministratorController;
-<<<<<<< HEAD
-use App\Models\User;
-=======
 use App\Http\Controllers\api\StatisticsController;
->>>>>>> main
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('vcards', [VCardController::class, 'store']);
