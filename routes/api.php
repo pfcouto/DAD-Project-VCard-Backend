@@ -9,7 +9,11 @@ use App\Http\Controllers\api\DefaultCategoryController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\api\AdministratorController;
+<<<<<<< HEAD
 use App\Models\User;
+=======
+use App\Http\Controllers\api\StatisticsController;
+>>>>>>> main
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('vcards', [VCardController::class, 'store']);
@@ -24,17 +28,20 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('transactions/{transaction}', [TransactionController::class, 'update']);
     Route::delete('transactions/{transaction}', [TransactionController::class, 'delete']);
 
-    Route::get('categories', [CategoryController::class, 'index']);
-    Route::get('categories/{category}', [CategoryController::class, 'show']);
-    Route::post('categories', [CategoryController::class, 'store']);
-    Route::put('categories/{category}', [CategoryController::class, 'update']);
-    Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
+    // CATEGORIES
+    Route::get('vcards/{vcard}/categories', [CategoryController::class, 'getCategoriesOfVCard'])->middleware('can:viewCategoriesOfVCard,vcard');
+    // Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('categories/{category}', [CategoryController::class, 'show'])->middleware('can:view,category');
+    Route::post('categories', [CategoryController::class, 'store'])->middleware('can:create,App\Models\Category');
+    Route::put('categories/{category}', [CategoryController::class, 'update'])->middleware('can:update,category');
+    Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->middleware('can:destroy,category');
 
-    Route::get('defaultCategories', [DefaultCategoryController::class, 'index']);/*->middleware('can:viewAny,user')*/
-    Route::get('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'show']);/*->middleware('can:view,user')*/
-    Route::post('defaultCategories', [DefaultCategoryController::class, 'store']);
-    Route::put('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'update']);/*->middleware('can:update,user')*/
-    Route::delete('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'destroy']);/*->middleware('can:destroy,user')*/
+    // DEFAULT CATEGORIES
+    Route::get('defaultCategories', [DefaultCategoryController::class, 'index'])->middleware('can:viewAny,App\Models\DefaultCategory');
+    Route::get('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'show'])->middleware('can:view,defaultCategory');
+    Route::post('defaultCategories', [DefaultCategoryController::class, 'store'])->middleware('can:viewAny,App\Models\DefaultCategory');
+    Route::put('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'update'])->middleware('can:update,defaultCategory');
+    Route::delete('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'destroy'])->middleware('can:destroy,defaultCategory');
 
     // VCARDS
     Route::get('vcards', [VCardController::class, 'index']); //->middleware('can:viewAny');
@@ -60,4 +67,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('administrators', [AdministratorController::class, 'store']);
     Route::patch('administrators/{administrator}/password', [AdministratorController::class, 'update_password']);
     Route::delete('administrators/{administrator}', [AdministratorController::class, 'delete']);
+
+    //STATISTICS
+    Route::get('statistics/sumbymonthyear' ,[StatisticsController::class, 'sumbymonthyear']);
+    Route::get('statistics/sumbymonthyear/{year}' ,[StatisticsController::class, 'sumbymonthyearFilterYear']);
+    Route::get('statistics/countpaymentype', [StatisticsController::class, 'countPaymentType']);
+    Route::get('statistics/countpaymentype/{year}', [StatisticsController::class, 'countPaymentTypeFilterYear']);
+    Route::get('statistics/counters', [StatisticsController::class, 'counters']);
+    Route::get('statistics/categories', [StatisticsController::class, 'categories']);
+    Route::get('statistics/categories/{year}', [StatisticsController::class, 'categoriesFilterYear']);
+    Route::get('statistics/years', [StatisticsController::class, 'years']);
 });
