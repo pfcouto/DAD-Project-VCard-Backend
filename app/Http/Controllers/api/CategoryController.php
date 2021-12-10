@@ -52,7 +52,7 @@ class CategoryController extends Controller
             $qry->where('type', $type);
         }
 
-        return CategoryResource::collection($qry->orderBy('name', 'ASC')->paginate(10));
+        return CategoryResource::collection($qry->orderBy('id', 'ASC')->paginate(10));
     }
 
     // public function getTransactionsOfCategory(Request $request, Category $category)
