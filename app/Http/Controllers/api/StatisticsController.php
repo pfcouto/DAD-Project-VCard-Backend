@@ -96,7 +96,7 @@ class StatisticsController extends Controller
     public function categories()
     {
         if (auth::user()->user_type == 'A') {
-            $array = DB::select('select c.name, count(c.name) as count from transactions t inner join categories c on t.category_id = c.id group by c.name order by count desc limit 5');
+            $array = DB::select('select c.name, count(c.name) as count from transactions t inner join default_categories c on t.category_id = c.id group by c.name order by count desc limit 5');
         } else {
             $array = DB::select('select c.name, count(c.name) as count from transactions t inner join categories c on t.category_id = c.id where c.vcard = ' . auth::user()->username . ' group by c.name order by count desc limit 5');
         }
@@ -108,7 +108,7 @@ class StatisticsController extends Controller
 
         if ($this->validateYear($year) == true) {
             if (auth::user()->user_type == 'A') {
-                $array = DB::select('select c.name, count(c.name) as count from transactions t inner join categories c on t.category_id = c.id where year(t.date) = ' . $year . ' group by c.name order by count desc limit 5');
+                $array = DB::select('select c.name, count(c.name) as count from transactions t inner join default_categories c on t.category_id = c.id where year(t.date) = ' . $year . ' group by c.name order by count desc limit 5');
             } else {
                 $array = DB::select('select c.name, count(c.name) as count from transactions t inner join categories c on t.category_id = c.id where c.vcard = ' . auth::user()->username . ' and year(t.date) = ' . $year . ' group by c.name order by count desc limit 5');
             }
