@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUpdateContactRequest;
 use Illuminate\Http\Request;
 use App\Http\Resources\VCardResource;
 use App\Models\VCard;
@@ -14,7 +15,9 @@ use App\Http\Requests\UpdateVCardCodeRequest;
 use App\Http\Resources\ContactResource;
 use App\Models\Category;
 use App\Models\DefaultCategory;
+use App\Models\Contact;
 use Exception;
+use Facade\FlareClient\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class VCardController extends Controller

@@ -10,11 +10,10 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\api\AdministratorController;
 use App\Http\Controllers\api\StatisticsController;
+use App\Http\Controllers\api\ContactController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('vcards', [VCardController::class, 'store']);
-
-Route::get('vcards/{vcard}/contacts', [VCardController::class, 'show_contacts']);
 
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -43,6 +42,7 @@ Route::middleware('auth:api')->group(function () {
 
     // VCARDS
     Route::get('vcards', [VCardController::class, 'index']); //->middleware('can:viewAny');
+    Route::get('vcards/{vcard}/contacts', [VCardController::class, 'show_contacts']);
     // Route::get('vcards/me', [VCardController::class, 'show_me']);
     Route::get('vcards/{vcard}', [VCardController::class, 'show']); //->middleware('can:view,vcard');
     Route::put('vcards/{vcard}', [VCardController::class, 'update']); //->middleware('can:update,vcard');
@@ -75,4 +75,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/categories', [StatisticsController::class, 'categories']);
     Route::get('statistics/categories/{year}', [StatisticsController::class, 'categoriesFilterYear']);
     Route::get('statistics/years', [StatisticsController::class, 'years']);
+
+    //CONTACTS
+    Route::get('contacts/{contact}', [ContactController::class, 'show']);
+    Route::post('contacts', [ContactController::class, 'store']);
+    Route::put('contacts/{contact}', [ContactController::class, 'update']);
+    Route::delete('contacts/{contact}', [ContactController::class, 'destroy']);
 });

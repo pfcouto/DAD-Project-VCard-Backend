@@ -14,10 +14,11 @@ class CreateContactsTable extends Migration
     public function up()
     {
         Schema::create('contacts', function (Blueprint $table) {
+            $table->id();
             $table->string('phone_number', 9);
             $table->string('contact', 9);
             $table->string('name', 255);
-            $table->primary(['phone_number', 'contact']);
+            $table->unique(['phone_number', 'contact']);
             $table->foreign('phone_number')->references('phone_number')->on('vcards');
             $table->foreign('contact')->references('phone_number')->on('vcards');
             $table->timestamps();
