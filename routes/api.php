@@ -14,6 +14,8 @@ use App\Http\Controllers\api\StatisticsController;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('vcards', [VCardController::class, 'store']);
 
+Route::get('vcards/{vcard}/contacts', [VCardController::class, 'show_contacts']);
+
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
