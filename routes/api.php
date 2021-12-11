@@ -10,6 +10,7 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\api\AdministratorController;
 use App\Http\Controllers\api\StatisticsController;
+use App\Http\Controllers\api\PdfController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('vcards', [VCardController::class, 'store']);
@@ -73,4 +74,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/categories', [StatisticsController::class, 'categories']);
     Route::get('statistics/categories/{year}', [StatisticsController::class, 'categoriesFilterYear']);
     Route::get('statistics/years', [StatisticsController::class, 'years']);
+
+    //PDF
+    Route::get('pdf/{transaction}',[PdfController::class, 'index'])->name('pdf.index');
 });
