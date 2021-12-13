@@ -100,15 +100,17 @@ class TransactionController extends Controller
             $categoryValidator->validate();
         }
 
-        $confirmationCodeValidator = Validator::make(
-            $validated_data,
-            ['confirmation_code' => [function ($attribute, $value, $fail) use ($vCard) {
-                if (!Hash::check($value, $vCard->confirmation_code)){
-                    $fail('Invalid confirmation code');
-                }
-            }]]
-        );
-        $confirmationCodeValidator->validate();
+        if ($validated_data['type'] == 'D'){
+            $confirmationCodeValidator = Validator::make(
+                $validated_data,
+                ['confirmation_code' => [function ($attribute, $value, $fail) use ($vCard) {
+                    if (!Hash::check($value, $vCard->confirmation_code)){
+                        $fail('Invalid confirmation code');
+                    }
+                }]]
+            );
+            $confirmationCodeValidator->validate();
+        }
 
         $transaction = new Transaction($validated_data);
         $date = date('Y-m-d');
