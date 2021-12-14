@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreUpdateContactRequest;
 use App\Http\Resources\ContactResource;
 use App\Models\Contact;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ContactController extends Controller
 {
@@ -17,7 +20,24 @@ class ContactController extends Controller
     public function store(StoreUpdateContactRequest $request)
     {
         $validated_data = $request->validated();
-        $new_contact = Contact::create($validated_data);
+
+        if (Auth::user()->username != $validated_data['phone_number']){
+            return Response("", 403);
+        }
+
+        $sameContactValidator = Validator::make(
+            $validated_data,
+            ['contact' => [function ($attribute, $value, $fail) use ($validated_data) {
+                if (Contact::where('contact', $value)->where('phone_number', $validated_data['phone_number'])->first()) {
+                    $fail('A contact with this phone number already exists');
+                }
+            }]]
+        );
+        $sameContactValidator->validate();
+        
+        $new_contact = new Contact($validated_data);
+
+        $new_contact->save();
 
         return new ContactResource($new_contact);
     }
