@@ -16,6 +16,7 @@ use App\Models\DefaultCategory;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UpdatePhotoRequest;
 
 class VCardController extends Controller
 {
@@ -121,6 +122,9 @@ class VCardController extends Controller
 
     public function update_photo(Request $request, VCard $vcard)
     {
+        $request->validate([
+            'photo_url' => 'required|image',
+        ]);
         if ($request->hasFile('photo_url')) {
             $path = $request->photo_url->store('public/fotos');
             $vcard['photo_url'] = basename($path);
