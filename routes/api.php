@@ -51,19 +51,18 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('vcards/{vcard}', [VCardController::class, 'destroy']); //->middleware('can:delete,vcard');
 
     //USERS
-    Route::get('users', [UserController::class, 'index']);
-    Route::get('users/me', [UserController::class, 'show_me']);
-    Route::get('users/{user}', [UserController::class, 'show']);
-
+    //Route::get('users', [UserController::class, 'index']);
+    Route::get('users/me', [UserController::class, 'show_me'])->middleware('can:view,App\Models\User');
+    //Route::get('users/{user}', [UserController::class, 'show']);
     Route::get('paymenttypes', [PaymentTypeController::class, 'index']);
 
     //ADMINISTRATORS
-    Route::get('administrators', [AdministratorController::class, 'index']);
-    Route::get('administrators/{administrator}', [AdministratorController::class, 'show']);
-    Route::put('administrators/{administrator}', [AdministratorController::class, 'update']);
-    Route::post('administrators', [AdministratorController::class, 'store']);
-    Route::patch('administrators/{administrator}/password', [AdministratorController::class, 'update_password']);
-    Route::delete('administrators/{administrator}', [AdministratorController::class, 'delete']);
+    Route::get('administrators', [AdministratorController::class, 'index'])->middleware('can:viewAny,App\Models\Administrator');
+    Route::get('administrators/{administrator}', [AdministratorController::class, 'show'])->middleware('can:view,administrator');
+    Route::put('administrators/{administrator}', [AdministratorController::class, 'update'])->middleware('can:update,administrator');
+    Route::post('administrators', [AdministratorController::class, 'store'])->middleware('can:create,App\Models\Administrator');
+    Route::patch('administrators/{administrator}/password', [AdministratorController::class, 'update_password'])->middleware('can:updatePassword,administrator');
+    Route::delete('administrators/{administrator}', [AdministratorController::class, 'delete'])->middleware('can:delete,administrator');
 
     //STATISTICS
     Route::get('statistics/sumbymonthyear' ,[StatisticsController::class, 'sumbymonthyear']);
