@@ -15,6 +15,7 @@ use App\Models\Category;
 use App\Models\DefaultCategory;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class VCardController extends Controller
 {
@@ -43,10 +44,10 @@ class VCardController extends Controller
         $newVCard['password'] = bcrypt($newVCard['password']);
         $newVCard['confirmation_code'] = bcrypt($newVCard['confirmation_code']);
 
-        if ($request->hasFile('photo_url')) {
-            $path = $request->photo_url->store('public/fotos');
-            $newVCard['photo_url'] = basename($path);
-        }
+        // if ($request->hasFile('photo_url')) {
+        //     $path = $request->photo_url->store('public/fotos');
+        //     $newVCard['photo_url'] = basename($path);
+        // }
 
         DB::beginTransaction();
 
@@ -71,10 +72,12 @@ class VCardController extends Controller
     {
         $newVCard = $request->validated();
 
-        if ($request->hasFile('photo_url')) {
-            $path = $request->photo_url->store('public/fotos');
-            $newVCard['photo_url'] = basename($path);
-        }
+        // if ($request->hasFile('photo_url')) {
+        //     //Storage::delete('/storage/fotos/' . $vcard->photo_url);
+        //     $path = $request->photo_url->store('/storage/fotos/');
+        //     $newVCard['photo_url'] = basename($path);
+        // }
+
 
         $vcard->update($newVCard);
         return new VCardResource($vcard);
@@ -114,5 +117,14 @@ class VCardController extends Controller
         }
         $vcard->forceDelete();
         return new VCardResource($vcard);
+    }
+
+    public function update_photo(Request $request, VCard $vcard)
+    {
+        if ($request->hasFile('photo_url')) {
+            $path = $request->photo_url->store('public/fotos');
+            $vcard['photo_url'] = basename($path);
+        }
+        $vcard->save();
     }
 }
