@@ -11,11 +11,6 @@ class TransactionPolicy
 {
     use HandlesAuthorization;
 
-    public function viewTransactionsOfVCard(User $user, VCard $vCard)
-    {
-        return $user->username == $vCard->phone_number;
-    }
-
     public function view(User $user, Transaction $transaction)
     {
 

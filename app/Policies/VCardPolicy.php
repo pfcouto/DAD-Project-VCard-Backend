@@ -61,4 +61,9 @@ class VCardPolicy
     {
         return $user->username == $vCard->phone_number;
     }
+    
+    public function viewContactsOfVCard(User $user, VCard $vCard)
+    {
+        return $user->username == $vCard->phone_number;
+    }
 }
