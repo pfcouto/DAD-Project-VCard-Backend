@@ -56,4 +56,9 @@ class VCardPolicy
         }
         return false;
     }
+    
+    public function viewTransactionsOfVCard(User $user, VCard $vCard)
+    {
+        return $user->username == $vCard->phone_number;
+    }
 }

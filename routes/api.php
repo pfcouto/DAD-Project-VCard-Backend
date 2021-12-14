@@ -18,12 +18,11 @@ Route::post('vcards', [VCardController::class, 'store']);
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::get('vcards/{vcard}/transactions', [TransactionController::class, 'getTransactionsOfVCard']);
-    Route::get('transactions', [TransactionController::class, 'index']);
-    Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
-    Route::post('transactions', [TransactionController::class, 'store']);
-    Route::patch('transactions/{transaction}', [TransactionController::class, 'update']);
-    Route::delete('transactions/{transaction}', [TransactionController::class, 'delete']);
+    Route::get('vcards/{vcard}/transactions', [TransactionController::class, 'getTransactionsOfVCard'])->middleware('can:viewTransactionsOfVCard,vcard');
+    Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->middleware('can:view,transaction');
+    Route::post('transactions', [TransactionController::class, 'store'])->middleware('can:create,App\Models\Transaction');
+    Route::patch('transactions/{transaction}', [TransactionController::class, 'update'])->middleware('can:update,transaction');
+    Route::delete('transactions/{transaction}', [TransactionController::class, 'delete'])->middleware('can:destroy,transaction');
 
     // CATEGORIES
     Route::get('vcards/{vcard}/categories', [CategoryController::class, 'getCategoriesOfVCard'])->middleware('can:viewCategoriesOfVCard,vcard');
