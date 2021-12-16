@@ -75,6 +75,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/categories/{year}', [StatisticsController::class, 'categoriesFilterYear']);
     Route::get('statistics/years', [StatisticsController::class, 'years']);
 
+    Route::get('statistics/balanceovertime' ,[StatisticsController::class, 'balanceOverTime']);
+
     //PDF
     Route::get('pdf/{transaction}',[PdfController::class, 'index'])->name('pdf.index');
 });

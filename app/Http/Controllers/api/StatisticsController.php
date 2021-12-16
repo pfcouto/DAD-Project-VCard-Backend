@@ -127,4 +127,13 @@ class StatisticsController extends Controller
         }
         return response()->json($array);
     }
+
+    public function balanceOverTime(){
+        if (auth::user()->user_type == 'A') {
+            return response()->json(['error' => 'Invalid Request'], 401);
+        } else {
+            $array = DB::select('select new_balance as balance,date from transactions where vcard =' . auth::user()->username . ' order by date asc');
+        }
+        return response()->json($array);
+    }
 }
