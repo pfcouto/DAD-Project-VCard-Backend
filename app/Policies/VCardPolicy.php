@@ -25,30 +25,31 @@ class VCardPolicy
         return true;
     }
 
-    public function update(User $user, User $vcard)
+    public function update(User $user, VCard $vcard)
     {
         return $user->user_type == 'A' || $user->id == $vcard->phone_number;
     }
 
-    public function updatePassword(User $user, User $vcard)
+    public function updatePassword(User $user, VCard $vcard)
     {
         return $user->id == $vcard->phone_number;
     }
 
-    public function updateCode(User $user, User $vcard)
+    public function updateCode(User $user, VCard $vcard)
     {
         return $user->id == $vcard->phone_number;
     }
 
-    public function updateBlock(User $user, User $vcard)
+    public function updateBlock(User $user, VCard $vcard)
     {
         return $user->user_type == 'A';
     }
 
-    public function delete(User $user, User $vcard)
+    public function delete(User $user, VCard $vcard)
     {
-        return ($user->id == $vcard->phone_number);
+        return ($user->user_type == 'A' || $user->id == $vcard->phone_number);
     }
+
     public function viewCategoriesOfVCard(User $user, VCard $vcard)
     {
         if ($user->user_type == 'V' && $user->username == $vcard->phone_number) {

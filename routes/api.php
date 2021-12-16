@@ -10,6 +10,8 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\api\AdministratorController;
 use App\Http\Controllers\api\StatisticsController;
+use App\Models\User;
+use App\Models\VCard;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('vcards', [VCardController::class, 'store']);
@@ -40,14 +42,14 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('defaultCategories/{defaultCategory}', [DefaultCategoryController::class, 'destroy'])->middleware('can:destroy,defaultCategory');
 
     // VCARDS
-    Route::get('vcards', [VCardController::class, 'index']); //->middleware('can:viewAny');
+    Route::get('vcards', [VCardController::class, 'index'])->middleware('can:viewAny,App\Models\VCard',);
     // Route::get('vcards/me', [VCardController::class, 'show_me']);
-    Route::get('vcards/{vcard}', [VCardController::class, 'show']); //->middleware('can:view,vcard');
-    Route::put('vcards/{vcard}', [VCardController::class, 'update']); //->middleware('can:update,vcard');
-    Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password']); //->middleware('can:updatePassword,vcard');
-    Route::patch('vcards/{vcard}/code', [VCardController::class, 'update_code']); //->middleware('can:updateCode,vcard');
-    Route::patch('vcards/{vcard}/blocked', [VCardController::class, 'update_blocked']); //->middleware('can:updateBlock,vcard');
-    Route::delete('vcards/{vcard}', [VCardController::class, 'destroy']); //->middleware('can:delete,vcard');
+    Route::get('vcards/{vcard}', [VCardController::class, 'show'])->middleware('can:view,vcard');
+    Route::put('vcards/{vcard}', [VCardController::class, 'update'])->middleware('can:update,vcard');
+    Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password'])->middleware('can:updatePassword,vcard');
+    Route::patch('vcards/{vcard}/code', [VCardController::class, 'update_code'])->middleware('can:updateCode,vcard');
+    Route::patch('vcards/{vcard}/blocked', [VCardController::class, 'update_blocked'])->middleware('can:updateBlock,vcard');
+    Route::delete('vcards/{vcard}', [VCardController::class, 'destroy'])->middleware('can:delete,vcard');
 
     //USERS
     Route::get('users', [UserController::class, 'index']);
@@ -65,8 +67,8 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('administrators/{administrator}', [AdministratorController::class, 'delete']);
 
     //STATISTICS
-    Route::get('statistics/sumbymonthyear' ,[StatisticsController::class, 'sumbymonthyear']);
-    Route::get('statistics/sumbymonthyear/{year}' ,[StatisticsController::class, 'sumbymonthyearFilterYear']);
+    Route::get('statistics/sumbymonthyear', [StatisticsController::class, 'sumbymonthyear']);
+    Route::get('statistics/sumbymonthyear/{year}', [StatisticsController::class, 'sumbymonthyearFilterYear']);
     Route::get('statistics/countpaymentype', [StatisticsController::class, 'countPaymentType']);
     Route::get('statistics/countpaymentype/{year}', [StatisticsController::class, 'countPaymentTypeFilterYear']);
     Route::get('statistics/counters', [StatisticsController::class, 'counters']);

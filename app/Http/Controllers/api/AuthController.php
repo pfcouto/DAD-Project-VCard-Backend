@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,14 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        $user = User::find($request->username);
+        if ($user != null && ($user->blocked == "1" || $user->deleted_at != null)) {
+            return response()->json(
+                ['msg' => 'User is blocked'],
+                403
+            );
+        }
+
         request()->request->add([
             'grant_type' => 'password',
             'client_id' => CLIENT_ID,
@@ -23,7 +32,7 @@ class AuthController extends Controller
             'scope'         => '',
         ]);
 
-        $request = Request::create(env('PASSPORT_SERVER_URL'). '/oauth/token', 'POST');
+        $request = Request::create(env('PASSPORT_SERVER_URL') . '/oauth/token', 'POST');
         $response = Route::dispatch($request);
         $errorCode = $response->getStatusCode();
 
@@ -36,6 +45,7 @@ class AuthController extends Controller
             );
         }
     }
+
     public function logout(Request $request)
     {
         $accessToken = $request->user()->token();
