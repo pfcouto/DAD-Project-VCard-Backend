@@ -132,7 +132,7 @@ class StatisticsController extends Controller
         if (auth::user()->user_type == 'A') {
             return response()->json(['error' => 'Invalid Request'], 401);
         } else {
-            $array = DB::select('select round(avg(new_balance),2) as balance," " as date from transactions where vcard =' . auth::user()->username . ' group by week(date) order by date asc');
+            $array = DB::select('select round(avg(new_balance),2) as balance," " as date from transactions where vcard =' . auth::user()->username . ' group by month(date),year(date) order by date asc');
         }
         return response()->json($array);
     }
