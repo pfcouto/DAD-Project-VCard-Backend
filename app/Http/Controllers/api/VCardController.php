@@ -12,9 +12,12 @@ use App\Http\Requests\StoreVCardRequest;
 use App\Http\Requests\UpdateVCardBlockedRequest;
 use App\Http\Requests\UpdateVCardPasswordRequest;
 use App\Http\Requests\UpdateVCardCodeRequest;
+use App\Http\Resources\ContactResource;
 use App\Models\Category;
 use App\Models\DefaultCategory;
+use App\Models\Contact;
 use Exception;
+use Facade\FlareClient\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -34,6 +37,11 @@ class VCardController extends Controller
     {
         $vCardUser = VCard::findOrFail($request->username);
         return new VCardResource($vCardUser);
+    }
+
+    public function show_contacts(VCard $vcard)
+    {
+        return ContactResource::collection($vcard->contacts);
     }
 
     public function store(StoreVCardRequest $request)

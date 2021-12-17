@@ -11,6 +11,7 @@ use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\api\AdministratorController;
 use App\Http\Controllers\api\StatisticsController;
 use App\Http\Controllers\api\PdfController;
+use App\Http\Controllers\api\ContactController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('vcards', [VCardController::class, 'store']);
@@ -18,12 +19,11 @@ Route::post('vcards', [VCardController::class, 'store']);
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::get('vcards/{vcard}/transactions', [TransactionController::class, 'getTransactionsOfVCard']);
-    Route::get('transactions', [TransactionController::class, 'index']);
-    Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
-    Route::post('transactions', [TransactionController::class, 'store']);
-    Route::patch('transactions/{transaction}', [TransactionController::class, 'update']);
-    Route::delete('transactions/{transaction}', [TransactionController::class, 'delete']);
+    Route::get('vcards/{vcard}/transactions', [TransactionController::class, 'getTransactionsOfVCard'])->middleware('can:viewTransactionsOfVCard,vcard');
+    Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->middleware('can:view,transaction');
+    Route::post('transactions', [TransactionController::class, 'store'])->middleware('can:create,App\Models\Transaction');
+    Route::patch('transactions/{transaction}', [TransactionController::class, 'update'])->middleware('can:update,transaction');
+    Route::delete('transactions/{transaction}', [TransactionController::class, 'delete'])->middleware('can:destroy,transaction');
 
     // CATEGORIES
     Route::get('vcards/{vcard}/categories', [CategoryController::class, 'getCategoriesOfVCard'])->middleware('can:viewCategoriesOfVCard,vcard');
@@ -42,7 +42,7 @@ Route::middleware('auth:api')->group(function () {
 
     // VCARDS
     Route::get('vcards', [VCardController::class, 'index'])->middleware('can:viewAny,App\Models\VCard',);
-    // Route::get('vcards/me', [VCardController::class, 'show_me']);
+    Route::get('vcards/{vcard}/contacts', [VCardController::class, 'show_contacts'])->middleware('can:viewContactsOfVCard,vcard');
     Route::get('vcards/{vcard}', [VCardController::class, 'show'])->middleware('can:view,vcard');
     Route::put('vcards/{vcard}', [VCardController::class, 'update'])->middleware('can:update,vcard');
     Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password'])->middleware('can:updatePassword,vcard');
@@ -75,9 +75,14 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/categories', [StatisticsController::class, 'categories']);
     Route::get('statistics/categories/{year}', [StatisticsController::class, 'categoriesFilterYear']);
     Route::get('statistics/years', [StatisticsController::class, 'years']);
-
     Route::get('statistics/balanceovertime', [StatisticsController::class, 'balanceOverTime']);
 
     //PDF
     Route::get('pdf/{transaction}', [PdfController::class, 'index'])->name('pdf.index');
+
+    //CONTACTS
+    Route::get('contacts/{contact}', [ContactController::class, 'show'])->middleware('can:view,contact');
+    Route::post('contacts', [ContactController::class, 'store'])->middleware('can:create,App\Models\Contact');
+    Route::put('contacts/{contact}', [ContactController::class, 'update'])->middleware('can:update,contact');
+    Route::delete('contacts/{contact}', [ContactController::class, 'destroy'])->middleware('can:destroy,contact');
 });

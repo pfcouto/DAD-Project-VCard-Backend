@@ -30,7 +30,10 @@ class TransactionController extends Controller
     {
         $category = $request->category ?? '';
         $order = $request->order ?? '';
+        $orderBy = $request->orderBy ?? '';
         $type = $request->type ?? '';
+        $from = $request->from ?? '';
+        $to = $request->to ?? '';
 
         $qry = Transaction::query()->where('vcard', $vcard->phone_number);
 
@@ -42,12 +45,21 @@ class TransactionController extends Controller
             $qry->where('type', $type);
         }
 
-        switch($order){
-            case 'asc': 
-                $qry->orderBy('datetime', 'asc');
+        if ($from) {
+            $qry->where('datetime', '>', $from);
+        }
+
+        if ($to) {
+            $qry->where('datetime', '<', $to);
+        }
+
+        $orderByFinal = $orderBy == 'value' ? 'value' : 'datetime';
+        switch ($order) {
+            case 'asc':
+                $qry->orderBy($orderByFinal, 'asc');
                 break;
-            case 'desc': 
-                $qry->orderBy('datetime', 'desc');
+            case 'desc':
+                $qry->orderBy($orderByFinal, 'desc');
                 break;
         }
 
@@ -80,7 +92,7 @@ class TransactionController extends Controller
                 ['payment_reference' => [function ($attribute, $value, $fail) use ($validated_data) {
                     if (!VCard::find($value)) {
                         $fail('This VCard doesn\'t exist');
-                    } else if ($value == $validated_data["vcard"]){
+                    } else if ($value == $validated_data["vcard"]) {
                         $fail('Cannot Debit to the your own vcard');
                     }
                 }]]
@@ -88,11 +100,51 @@ class TransactionController extends Controller
             $paymentReferenceValidator->validate();
         }
 
+
+        $generalPaymentReferenceValidator = Validator::make(
+            $validated_data,
+            ['payment_reference' => [function ($attribute, $value, $fail) use ($validated_data) {
+                switch ($validated_data["payment_type"]) {
+                    case 'MBWAY':
+                    case 'VCARD':
+                        if (!preg_match('/^9[0-9]{8}$/', $value)) {
+                            $fail('Invalid phone number format');
+                        }
+                        break;
+                    case 'MB':
+                        if (!preg_match('/^[0-9]{5}-[0-9]{9}$/', $value)) {
+                            $fail('Invalid MB format');
+                        }
+                        break;
+                    case 'IBAN':
+                        if (!preg_match('/^PT50[0-9]{21}$/', $value)) {
+                            $fail('Invalid IBAN format');
+                        }
+                        break;
+                    case 'VISA':
+                        if (!preg_match('/^4[0-9]{12}(?:[0-9]{3})?$/', $value)) {
+                            $fail('Invalid VISA format');
+                        }
+                        break;
+                    case 'MASTERCARD':
+                        if (!preg_match('/^5[1-5][0-9]{14}|^(222[1-9]|22[3-9]\\d|2[3-6]\\d{2}|27[0-1]\\d|2720)[0-9]{12}$/', $value)) {
+                            $fail('Invalid MASTERCARD format');
+                        }
+                        break;
+                    case 'PAYPAL':
+                        if (!preg_match('/^(.+)@(.+){2,}\.(.+){2,}$/', $value)) {
+                            $fail('Invalid PAYPAL format');
+                        }
+                }
+            }]]
+        );
+        $generalPaymentReferenceValidator->validate();
+
         if (array_key_exists('category_id', $validated_data)) {
             $categoryValidator = Validator::make(
                 $validated_data,
                 ['category_id' => [function ($attribute, $value, $fail) use ($validated_data) {
-                    if (!Category::where('id', $value)->where('vcard', $validated_data['vcard'])) {
+                    if (!Category::where('id', $value)->where('vcard', $validated_data['vcard'])->first()) {
                         $fail('Invalid category');
                     }
                 }]]
@@ -100,15 +152,17 @@ class TransactionController extends Controller
             $categoryValidator->validate();
         }
 
-        $confirmationCodeValidator = Validator::make(
-            $validated_data,
-            ['confirmation_code' => [function ($attribute, $value, $fail) use ($vCard) {
-                if (!Hash::check($value, $vCard->confirmation_code)){
-                    $fail('Invalid confirmation code');
-                }
-            }]]
-        );
-        $confirmationCodeValidator->validate();
+        if ($validated_data['type'] == 'D') {
+            $confirmationCodeValidator = Validator::make(
+                $validated_data,
+                ['confirmation_code' => [function ($attribute, $value, $fail) use ($vCard) {
+                    if (!Hash::check($value, $vCard->confirmation_code)) {
+                        $fail('Invalid confirmation code');
+                    }
+                }]]
+            );
+            $confirmationCodeValidator->validate();
+        }
 
         $transaction = new Transaction($validated_data);
         $date = date('Y-m-d');
