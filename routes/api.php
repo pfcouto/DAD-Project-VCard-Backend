@@ -10,8 +10,7 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\api\AdministratorController;
 use App\Http\Controllers\api\StatisticsController;
-use App\Models\User;
-use App\Models\VCard;
+use App\Http\Controllers\api\PdfController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('vcards', [VCardController::class, 'store']);
@@ -50,21 +49,22 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('vcards/{vcard}/code', [VCardController::class, 'update_code'])->middleware('can:updateCode,vcard');
     Route::patch('vcards/{vcard}/blocked', [VCardController::class, 'update_blocked'])->middleware('can:updateBlock,vcard');
     Route::delete('vcards/{vcard}', [VCardController::class, 'destroy'])->middleware('can:delete,vcard');
+    Route::post('vcards/{vcard}/photo', [VCardController::class, 'update_photo'])->middleware('can:updatePhoto,vcard');
+
 
     //USERS
-    Route::get('users', [UserController::class, 'index']);
-    Route::get('users/me', [UserController::class, 'show_me']);
-    Route::get('users/{user}', [UserController::class, 'show']);
-
+    //Route::get('users', [UserController::class, 'index']);
+    Route::get('users/me', [UserController::class, 'show_me'])->middleware('can:view,App\Models\User');
+    //Route::get('users/{user}', [UserController::class, 'show']);
     Route::get('paymenttypes', [PaymentTypeController::class, 'index']);
 
     //ADMINISTRATORS
-    Route::get('administrators', [AdministratorController::class, 'index']);
-    Route::get('administrators/{administrator}', [AdministratorController::class, 'show']);
-    Route::put('administrators/{administrator}', [AdministratorController::class, 'update']);
-    Route::post('administrators', [AdministratorController::class, 'store']);
-    Route::patch('administrators/{administrator}/password', [AdministratorController::class, 'update_password']);
-    Route::delete('administrators/{administrator}', [AdministratorController::class, 'delete']);
+    Route::get('administrators', [AdministratorController::class, 'index'])->middleware('can:viewAny,App\Models\Administrator');
+    Route::get('administrators/{administrator}', [AdministratorController::class, 'show'])->middleware('can:view,administrator');
+    Route::put('administrators/{administrator}', [AdministratorController::class, 'update'])->middleware('can:update,administrator');
+    Route::post('administrators', [AdministratorController::class, 'store'])->middleware('can:create,App\Models\Administrator');
+    Route::patch('administrators/{administrator}/password', [AdministratorController::class, 'update_password'])->middleware('can:updatePassword,administrator');
+    Route::delete('administrators/{administrator}', [AdministratorController::class, 'delete'])->middleware('can:delete,administrator');
 
     //STATISTICS
     Route::get('statistics/sumbymonthyear', [StatisticsController::class, 'sumbymonthyear']);
@@ -75,4 +75,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/categories', [StatisticsController::class, 'categories']);
     Route::get('statistics/categories/{year}', [StatisticsController::class, 'categoriesFilterYear']);
     Route::get('statistics/years', [StatisticsController::class, 'years']);
+
+    Route::get('statistics/balanceovertime', [StatisticsController::class, 'balanceOverTime']);
+
+    //PDF
+    Route::get('pdf/{transaction}', [PdfController::class, 'index'])->name('pdf.index');
 });

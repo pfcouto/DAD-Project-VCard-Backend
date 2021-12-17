@@ -10,9 +10,17 @@ use Illuminate\Http\Request;
 
 class DefaultCategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return DefaultCategoryResource::collection(DefaultCategory::all());
+        $type = $request->type ?? '';
+
+        $qry = DefaultCategory::query();
+
+        if ($type) {
+            $qry->where('type', $type);
+        }
+
+        return DefaultCategoryResource::collection($qry->orderBy('id', 'ASC')->paginate(10));
     }
 
     public function show(DefaultCategory $defaultCategory)
@@ -34,7 +42,6 @@ class DefaultCategoryController extends Controller
 
     public function destroy(DefaultCategory $defaultCategory)
     {
-        // $defaultCategory->assignedUsers()->detach();
         $defaultCategory->delete();
         return new DefaultCategoryResource($defaultCategory);
     }

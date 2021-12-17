@@ -96,7 +96,7 @@ class StatisticsController extends Controller
     public function categories()
     {
         if (auth::user()->user_type == 'A') {
-            $array = DB::select('select c.name, count(c.name) as count from transactions t inner join categories c on t.category_id = c.id group by c.name order by count desc limit 5');
+            $array = DB::select('select c.name, count(c.name) as count from transactions t inner join default_categories c on t.category_id = c.id group by c.name order by count desc limit 5');
         } else {
             $array = DB::select('select c.name, count(c.name) as count from transactions t inner join categories c on t.category_id = c.id where c.vcard = ' . auth::user()->username . ' group by c.name order by count desc limit 5');
         }
@@ -108,7 +108,7 @@ class StatisticsController extends Controller
 
         if ($this->validateYear($year) == true) {
             if (auth::user()->user_type == 'A') {
-                $array = DB::select('select c.name, count(c.name) as count from transactions t inner join categories c on t.category_id = c.id where year(t.date) = ' . $year . ' group by c.name order by count desc limit 5');
+                $array = DB::select('select c.name, count(c.name) as count from transactions t inner join default_categories c on t.category_id = c.id where year(t.date) = ' . $year . ' group by c.name order by count desc limit 5');
             } else {
                 $array = DB::select('select c.name, count(c.name) as count from transactions t inner join categories c on t.category_id = c.id where c.vcard = ' . auth::user()->username . ' and year(t.date) = ' . $year . ' group by c.name order by count desc limit 5');
             }
@@ -124,6 +124,15 @@ class StatisticsController extends Controller
             $array = DB::select('select year(date) as year from transactions group by year');
         } else {
             $array = DB::select('select year(date) as year from transactions where vcard = ' . auth::user()->username . ' group by year');
+        }
+        return response()->json($array);
+    }
+
+    public function balanceOverTime(){
+        if (auth::user()->user_type == 'A') {
+            return response()->json(['error' => 'Invalid Request'], 401);
+        } else {
+            $array = DB::select('select round(avg(new_balance),2) as balance," " as date from transactions where vcard =' . auth::user()->username . ' group by month(date),year(date) order by date asc');
         }
         return response()->json($array);
     }

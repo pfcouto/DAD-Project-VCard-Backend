@@ -35,6 +35,11 @@ class VCardPolicy
         return $user->id == $vcard->phone_number;
     }
 
+    public function updatePhoto(User $user, VCard $vcard)
+    {
+        return $user->user_type == 'A' || $user->id == $vcard->phone_number;
+    }
+
     public function updateCode(User $user, VCard $vcard)
     {
         return $user->id == $vcard->phone_number;

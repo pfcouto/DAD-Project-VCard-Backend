@@ -42,9 +42,17 @@ class CategoryController extends Controller
         return new CategoryResource($category);
     }
 
-    public function getCategoriesOfVCard(VCard $vcard)
+    public function getCategoriesOfVCard(Request $request, VCard $vcard)
     {
-        return CategoryResource::collection(Category::where('vcard', $vcard->phone_number)->orderBy('name', 'ASC')->paginate(10));
+        $type = $request->type ?? '';
+
+        $qry = Category::query()->where('vcard', $vcard->phone_number);
+
+        if ($type) {
+            $qry->where('type', $type);
+        }
+
+        return CategoryResource::collection($qry->orderBy('id', 'ASC')->paginate(10));
     }
 
     // public function getTransactionsOfCategory(Request $request, Category $category)
