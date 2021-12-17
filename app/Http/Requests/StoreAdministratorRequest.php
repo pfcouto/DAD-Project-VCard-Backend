@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 class StoreAdministratorRequest extends FormRequest
 {
     /**
@@ -25,7 +26,14 @@ class StoreAdministratorRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email','unique:users',
-            'password' => 'required|string|min:4|max:255',
+            'password' => [
+                'nullable', 'confirmed', 'string', 'max:255',
+                Password::min(4)
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+            ],
+
         ];
     }
 }

@@ -31,13 +31,13 @@ class StoreVCardRequest extends FormRequest
             'photo_url' => 'nullable|string|max:255',
 
             'password' => [
-                'nullable', 'confirmed', 'string', 'max:255',
+                'required', 'confirmed', 'string', 'max:255',
                 Password::min(4)
-                // ->mixedCase()
-                // ->numbers()
-                // ->symbols()
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
             ],
-            'confirmation_code' => 'nullable|confirmed|digits:4',
+            'confirmation_code' => 'required|confirmed|digits:4',
 
             'custom_options' => 'nullable|json',
             'custom_data' => 'nullable|json',
