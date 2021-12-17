@@ -30,7 +30,10 @@ class TransactionController extends Controller
     {
         $category = $request->category ?? '';
         $order = $request->order ?? '';
+        $orderBy = $request->orderBy ?? '';
         $type = $request->type ?? '';
+        $from = $request->from ?? '';
+        $to = $request->to ?? '';
 
         $qry = Transaction::query()->where('vcard', $vcard->phone_number);
 
@@ -42,12 +45,21 @@ class TransactionController extends Controller
             $qry->where('type', $type);
         }
 
+        if ($from) {
+            $qry->where('datetime', '>', $from);
+        }
+
+        if ($to) {
+            $qry->where('datetime', '<', $to);
+        }
+
+        $orderByFinal = $orderBy == 'value' ? 'value' : 'datetime';
         switch ($order) {
             case 'asc':
-                $qry->orderBy('datetime', 'asc');
+                $qry->orderBy($orderByFinal, 'asc');
                 break;
             case 'desc':
-                $qry->orderBy('datetime', 'desc');
+                $qry->orderBy($orderByFinal, 'desc');
                 break;
         }
 
