@@ -37,7 +37,7 @@ class VCardPolicy
 
     public function updatePhoto(User $user, VCard $vcard)
     {
-        return $user->user_type == 'A' || $user->id == $vcard->phone_number;
+        return $user->id == $vcard->phone_number;
     }
 
     public function updateCode(User $user, VCard $vcard)
@@ -52,7 +52,7 @@ class VCardPolicy
 
     public function delete(User $user, VCard $vcard)
     {
-        return ($user->user_type == 'A' || $user->id == $vcard->phone_number);
+        return $user->id == $vcard->phone_number;
     }
 
     public function viewCategoriesOfVCard(User $user, VCard $vcard)

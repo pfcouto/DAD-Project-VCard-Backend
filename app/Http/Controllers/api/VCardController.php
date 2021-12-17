@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteVCardRequest;
 use Illuminate\Http\Request;
 use App\Http\Resources\VCardResource;
 use App\Models\VCard;
@@ -15,8 +16,7 @@ use App\Models\Category;
 use App\Models\DefaultCategory;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\UpdatePhotoRequest;
+use Illuminate\Support\Facades\Hash;
 
 class VCardController extends Controller
 {
@@ -105,11 +105,13 @@ class VCardController extends Controller
         return new VCardResource($vcard);
     }
 
-    public function destroy($vcard)
+    public function destroy(DeleteVCardRequest $request, VCard $vcard)
     {
-        $vcard = VCard::withTrashed()->findOrFail($vcard);
+        if ($vcard->balance > 0) return response('Trying to delete a vcard that has a positive Balance', 400);
 
-        if ($vcard->balance > 0) return response('Trying to delete a vcard that has a positive Balance', 500);
+        if (!(Hash::check($request->validated()['password'], $vcard->password)) || !(Hash::check($request->validated()['code'], $vcard->confirmation_code))) {
+            return response('Password or code invalid', 400);
+        }
 
         if ($vcard->transactions->count() > 0) {
             //soft delete
