@@ -27,7 +27,7 @@ Route::middleware('auth:api')->group(function () {
 
     // CATEGORIES
     Route::get('vcards/{vcard}/categories', [CategoryController::class, 'getCategoriesOfVCard'])->middleware('can:viewCategoriesOfVCard,vcard');
-    // Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('vcards/{vcard}/categories/all', [CategoryController::class, 'getAllCategoriesOfVCard'])->middleware('can:viewCategoriesOfVCard,vcard');
     Route::get('categories/{category}', [CategoryController::class, 'show'])->middleware('can:view,category');
     Route::post('categories', [CategoryController::class, 'store'])->middleware('can:create,App\Models\Category');
     Route::put('categories/{category}', [CategoryController::class, 'update'])->middleware('can:update,category');

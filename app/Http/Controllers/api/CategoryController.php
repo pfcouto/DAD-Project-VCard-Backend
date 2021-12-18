@@ -54,14 +54,9 @@ class CategoryController extends Controller
 
         return CategoryResource::collection($qry->orderBy('id', 'ASC')->paginate(10));
     }
-
-    // public function getTransactionsOfCategory(Request $request, Category $category)
-    // {
-    //     //TaskResource::$format = 'detailed';
-    //     if (!$request->has('include_assigned')) {
-    //         return TaskResource::collection($user->tasks->sortByDesc('id'));
-    //     } else {
-    //         return TaskResource::collection($user->tasks->merge($user->assigedTasks)->sortByDesc('id'));
-    //     }
-    // }
+    
+    public function getAllCategoriesOfVCard(Request $request, VCard $vcard)
+    {
+        return CategoryResource::collection($vcard->categories);
+    }
 }
