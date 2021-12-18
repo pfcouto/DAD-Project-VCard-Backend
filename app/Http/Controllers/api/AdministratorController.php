@@ -10,6 +10,7 @@ use App\Models\Administrator;
 use App\Http\Requests\UpdateAdministratorRequest;
 use App\Http\Requests\StoreAdministratorRequest;
 use App\Http\Requests\UpdateAdministratorPasswordRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AdministratorController extends Controller
 {
@@ -46,6 +47,10 @@ class AdministratorController extends Controller
 
     public function delete(Administrator $administrator)
     {
+        if (auth::user()->email == $administrator->email){
+
+            return response("Cant delete Self",500);
+        }
         $administrator->delete();
         return response("",200);
     }
