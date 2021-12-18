@@ -47,6 +47,6 @@ class AdministratorController extends Controller
     public function delete(Administrator $administrator)
     {
         $administrator->delete();
-        return response()->json(null, 204);
+        return response("",200);
     }
 }
